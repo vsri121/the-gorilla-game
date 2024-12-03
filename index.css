@@ -1,19 +1,20 @@
 @import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap");
 
+/* General Styles */
 body {
-    margin: 0;
-    padding: 0;
-    font-family: "Inconsolata", monospace;
-    font-size: 14px;
-    color: white;
-    user-select: none;
-    -webkit-user-select: none;
-
+  margin: 0;
+  padding: 0;
+  font-family: "Inconsolata", monospace;
+  font-size: 14px;
+  color: white;
+  user-select: none;
+  -webkit-user-select: none;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  overflow: hidden;
+  height: 100vh;
+  overflow: auto; /* Allow scrolling if needed */
+  background-color: black;
 }
 
 button {
@@ -22,18 +23,20 @@ button {
   color: white;
   background: transparent;
   font-family: "Inconsolata", monospace;
-  padding: 10px;
-  font-size: 1em;
+  padding: 15px 20px; /* Larger tap area */
+  font-size: 1.2rem; /* Bigger for easier tapping */
 }
 
 button:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Info Panels */
 #info-left,
 #info-right {
   position: absolute;
   top: 20px;
+  font-size: 1rem;
 }
 
 #info-left {
@@ -45,6 +48,26 @@ button:hover {
   text-align: right;
 }
 
+/* Responsive Info Panels */
+@media (max-width: 768px) {
+  #info-left,
+  #info-right {
+    position: relative;
+    text-align: center;
+    margin: 10px 0;
+  }
+}
+
+/* Canvas */
+canvas#game {
+  width: 100%; /* Full width for responsiveness */
+  max-width: 600px; /* Optional max size */
+  height: auto; /* Maintain aspect ratio */
+  display: block;
+  margin: auto;
+}
+
+/* Bomb Grab Area */
 #bomb-grab-area {
   position: absolute;
   width: 30px;
@@ -54,16 +77,16 @@ button:hover {
   cursor: grab;
 }
 
+/* Instructions and Congratulations */
 #instructions,
 #congratulations {
   position: absolute;
   transition: visibility 0s, opacity 0.5s linear;
 }
 
-@media (min-height: 535px) {
-  #instructions {
-    min-height: 200px;
-  }
+#instructions {
+  font-size: 1.2rem;
+  text-align: center;
 }
 
 #congratulations {
@@ -76,43 +99,20 @@ button:hover {
   backdrop-filter: blur(5px);
 }
 
-#congratulations p a {
-  color: inherit;
-}
-
-#congratulations button {
-  border: 1px solid rgba(0, 0, 0, 0.9);
-  color: inherit;
-}
-
-#settings {
-  position: absolute;
-  top: calc(20px + 16.385px - 10px);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  right: 11em;
-}
-
-#settings,
-#info-left,
-#info-right {
-  opacity: 0;
-  transition: opacity 3s;
-}
-
+/* Adjust Instructions for Small Screens */
 @media (max-width: 450px) {
-  #settings,
-  #info-left,
-  #info-right {
-    opacity: 0;
-  }
   #instructions {
-    visibility: hidden;
+    font-size: 1rem;
+    padding: 10px;
+    text-align: center;
+  }
+
+  #congratulations {
+    padding: 30px;
   }
 }
 
-/* Basic CSS for the dropdown */
+/* Dropdown */
 .dropdown {
   position: relative;
   display: inline-block;
@@ -131,6 +131,7 @@ button:hover {
   background-color: #f9f9f9;
   min-width: 120px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 10;
 }
 
 .dropdown-content a {
@@ -146,11 +147,11 @@ button:hover {
   background-color: #f1f1f1;
 }
 
-/* Show dropdown content when hovering over the button */
 .dropdown:hover .dropdown-content {
   display: block;
 }
 
+/* Windmill */
 #windmill {
   position: absolute;
   right: 0;
@@ -174,83 +175,45 @@ button:hover {
   }
 }
 
+/* Responsive Windmill */
+@media (max-width: 768px) {
+  #windmill {
+    width: 50%;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* Wind Info */
 #wind-info {
   position: absolute;
   width: 100px;
   text-align: center;
   margin-bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-/** Youtube logo by https://codepen.io/alvaromontoro */
-#youtube {
-  z-index: 2;
-  display: block;
-  width: 30px;
-  height: 21px;
-  background: red;
-  position: relative;
-  border-radius: 50% / 11%;
-  transition: transform 0.5s;
-  color: black;
-}
-
-#youtube:hover,
-#youtube:focus {
-  transform: scale(1.2);
-}
-
-#youtube::before {
-  content: "";
-  display: block;
-  position: absolute;
-  top: 7.5%;
-  left: -6%;
-  width: 112%;
-  height: 85%;
-  background: red;
-  border-radius: 9% / 50%;
-}
-
-#youtube::after {
-  content: "";
-  display: block;
-  position: absolute;
-  top: 6px;
-  left: 11px;
-  width: 15px;
-  height: 10px;
-  border: 5px solid transparent;
-  box-sizing: border-box;
-  border-left: 10px solid white;
-}
-
-#youtube span {
-  font-size: 0;
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
-#youtube-card {
-  display: none;
-}
-
-#youtube:hover + #youtube-card {
-  color: black;
-  display: block;
-  position: absolute;
-  top: -20px;
-  right: -20px;
-  padding: 25px 60px 25px 25px;
-  width: 200px;
-  background-color: white;
-}
-
+/* Fullscreen Button */
 #fullscreen {
   all: unset;
   cursor: pointer;
   position: absolute;
   right: 10px;
   bottom: 10px;
+  width: 30px;
+  height: 30px;
+}
+
+#fullscreen svg {
+  width: 30px;
+  height: 30px;
+}
+
+@media (max-width: 450px) {
+  #fullscreen {
+    right: 20px;
+    bottom: 20px;
+  }
 }
