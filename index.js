@@ -1,14 +1,3 @@
-/*
-
-Learn how to code this game step-by-step on YouTube:
-
-https://www.youtube.com/watch?v=2q5EufbUEQk
-
-Follow me on 𝕏 for more: https://twitter.com/HunorBorbely
-
-*/
-
-// The state of the game
 let state = {};
 
 let isDragging = false;
@@ -75,6 +64,70 @@ const singlePlayerButtonDOM = document.querySelectorAll(".single-player");
 const twoPlayersButtonDOM = document.querySelectorAll(".two-players");
 const autoPlayButtonDOM = document.querySelectorAll(".auto-play");
 const colorModeButtonDOM = document.getElementById("color-mode");
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth * window.devicePixelRatio;
+  canvas.height = window.innerHeight * window.devicePixelRatio;
+  canvas.style.width = `${window.innerWidth}px`;
+  canvas.style.height = `${window.innerHeight}px`;
+  calculateScaleAndShift();
+  draw();
+}
+
+function addTouchEvents() {
+  const bombGrabArea = document.getElementById("bomb-grab-area");
+
+  bombGrabArea.addEventListener("touchstart", (e) => {
+      isDragging = true;
+      const touch = e.touches[0];
+      dragStartX = touch.clientX;
+      dragStartY = touch.clientY;
+  });
+
+  window.addEventListener("touchmove", (e) => {
+      if (isDragging) {
+          const touch = e.touches[0];
+          const deltaX = touch.clientX - dragStartX;
+          const deltaY = touch.clientY - dragStartY;
+
+          state.bomb.velocity.x = -deltaX;
+          state.bomb.velocity.y = deltaY;
+
+          setInfo(deltaX, deltaY);
+          draw();
+      }
+  });
+
+  window.addEventListener("touchend", () => {
+      if (isDragging) {
+          isDragging = false;
+          throwBomb();
+      }
+  });
+}
+
+// Dynamically adjust game scaling
+function calculateScaleAndShift() {
+    const totalWidth = state.buildings.at(-1).x + state.buildings.at(-1).width;
+    const horizontalScale = window.innerWidth / totalWidth;
+    const verticalScale = window.innerHeight / 500;
+
+    state.scale = Math.min(horizontalScale, verticalScale);
+    state.shift = (window.innerWidth - totalWidth * state.scale) / 2;
+}
+
+// Fullscreen toggle
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+// Additional functionality
+document.getElementById("fullscreen").addEventListener("click", toggleFullscreen);
+window.addEventListener("resize", resizeCanvas);
 
 colorModeButtonDOM.addEventListener("click", () => {
   if (settings.mode === "dark") {
@@ -172,6 +225,9 @@ function newGame() {
   if (settings.numberOfPlayers === 0) {
     computerThrow();
   }
+  resizeCanvas();
+    addTouchEvents();
+    draw();
 }
 
 function showInstructions() {
@@ -639,7 +695,7 @@ function drawBomb() {
     ctx.lineTo(state.bomb.velocity.x, state.bomb.velocity.y);
     ctx.stroke();
 
-    // Draw circle
+    // Draw circle  
     ctx.fillStyle = "white";
     ctx.beginPath();
     ctx.arc(0, 0, 6, 0, 2 * Math.PI);
